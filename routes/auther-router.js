@@ -7,18 +7,22 @@ import {
   updateAuther,
 } from "../controllers/author-controllers.js";
 import { autherSchema, validate } from "../helper-functions/data-validation.js";
+import { login } from "../helper-functions/create-token.js";
+import { verifyToken } from "../helper-functions/verify-token.js";
 
 const autherRouter = express.Router();
 //auther routes
+//login
+autherRouter.post("/login",login);
 //post author
-autherRouter.post("/author",[validate(autherSchema)], postAuther);
+autherRouter.post("/author",[verifyToken,validate(autherSchema)], postAuther);
 //get author
-autherRouter.get("/author", getAuther);
+autherRouter.get("/author",verifyToken,getAuther);
 //get author by email
-autherRouter.get("/author/:autherId", getAutherById);
+autherRouter.get("/author/:autherId",verifyToken, getAutherById);
 //delete author by id
-autherRouter.delete("/author", deleteAuther);
+autherRouter.delete("/author",verifyToken, deleteAuther);
 //update author by id
-autherRouter.patch("/author", updateAuther);
+autherRouter.patch("/author",verifyToken, updateAuther);
 
 export { autherRouter };

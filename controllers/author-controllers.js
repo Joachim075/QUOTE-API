@@ -1,18 +1,22 @@
 import { PrismaClient } from "@prisma/client";
 import statusCodes from "status-codes";
 const prisma = new PrismaClient();
-
+import bcrypt from "bcrypt"
 //post auther
 const postAuther = async (req, res) => {
     
-    try {
-  let newAuther = await prisma.auther.create({ data: req.body });
+//hash the password
+bcrypt.hash(req.body.password, 10, async function (err,hash) {
+  if (err) {
+    res
+      .status(statusCodes.BAD_REQUEST)
+      .json({ error: "failed to harsh password" });
+  } else {
+    //create auther
+    let newAuther = await prisma.auther.create({ data: {...req.body,password:hash}});
   res.json({ message: "created", newAuther });
-    } catch (error) {
-      console.log(error)
-        res.json({message:"Usere with email exists."})
-    }
-};
+  }
+});}
 
 //get auther
 const getAuther = async (req, res) => {
