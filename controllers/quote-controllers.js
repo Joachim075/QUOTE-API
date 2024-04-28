@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import statusCodes from "status-codes";
+import statusCodes from "http-status-codes";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +12,7 @@ const postQuote = async (req, res) => {
   
     } catch (error) {
       console.log(error)
-       res.json({error:"not good"}) 
+       res.json({error:"internal server error"}) 
     }
 };
 
@@ -37,7 +37,12 @@ const getQuoteById = async (req, res) => {
     const quote = await prisma.quotes.findUnique({
       where: { id:id },
     });
-    res.send(quote);
+    if (quote===null) {
+      res.json({message:"invalid quote id."});
+    } else {
+      res.send(quote);
+    }
+    
     } catch (error) {
         res.json({error:"not good"})
     }
@@ -66,8 +71,10 @@ const deleteQuote = async (req, res) => {
 //update quote
 const updateQuote = async (req,res) => {
   const id = parseInt(req.body.id)
- 
-    try {  
+ if (! id) {
+  res.json({message:"id not found"})
+ } else {
+  try {  
   const quote = await prisma.quotes.update({
     where: { id:id },
     data: req.body,
@@ -77,5 +84,7 @@ const updateQuote = async (req,res) => {
       console.log(error)
         res.json({error:"not good"})
     }
+ }
+    
 };
 export { postQuote, getQuote, getQuoteById, deleteQuote, updateQuote };

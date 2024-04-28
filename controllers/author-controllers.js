@@ -1,22 +1,36 @@
 import { PrismaClient } from "@prisma/client";
-import statusCodes from "status-codes";
+import { StatusCodes } from "http-status-codes";
 const prisma = new PrismaClient();
 import bcrypt from "bcrypt"
 //post auther
 const postAuther = async (req, res) => {
-    
-//hash the password
+  try {
+    const auther= await prisma.auther.findUnique({
+      where:{email:req.body.email}
+    })
+    if (auther!=null&&auther.email===req.body.email) {
+       // give response if user exists
+      res
+        .status(StatusCodes.FORBIDDEN)
+        .json({ message: "auther with this email already exists" });
+    } else {
+      //hash the password
 bcrypt.hash(req.body.password, 10, async function (err,hash) {
   if (err) {
     res
-      .status(statusCodes.BAD_REQUEST)
+      .status(StatusCodes.BAD_REQUEST)
       .json({ error: "failed to harsh password" });
   } else {
     //create auther
     let newAuther = await prisma.auther.create({ data: {...req.body,password:hash}});
   res.json({ message: "created", newAuther });
   }
-});}
+});
+    }
+  } catch (error) {
+    res.status(StatusCodes.EXPECTATION_FAILED).json({error:"didnt create user."});
+  }  
+}
 
 //get auther
 const getAuther = async (req, res) => {
@@ -36,13 +50,15 @@ const getAutherById = async (req, res) => {
     where: { id:id }
   }
  )
- if (! id) {
-  res.json({message:"not id"})
-};
+ if (auther === null) {
+  res.json({message:"invalid ID"});
+ } else {
+  res.json({auther})
+ }
   res.send(auther);
     } catch (error) {
-        console.log("here")
-        res.json({error:"not good"})
+        console.log(error)
+        res.json({error:"internal server error"})
     }
 };
 
@@ -52,9 +68,14 @@ const deleteAuther = async (req, res) => {
     const auther = await prisma.auther.delete({
         where: { email: req.body.email },
       });
-      res.json({ message: "Auther deleted successful", auther });
+      if (auther===null) {
+        res.json({message:"invalid email."});
+      } else {
+        res.json({ message: "Auther deleted successful", auther });
+      }
+      
   } catch (error) {
-    res.json({error:"not good"})
+    res.json({error:"Internal server error."})
   }
 };
 
@@ -65,11 +86,17 @@ const updateAuther = async (req,res) => {
         where: { email: req.body.email },
         data: req.body,
       });
-      res.send(auther);
+
+      if (auther===null) {
+        res.json({message:"invalid email."});
+      } else {
+        res.send(auther);
+      }
+      
       
  } catch (error) {
-  console.log("am here",error)
-    res.json({error:"not good"})
+  console.log(error)
+    res.json({error:"internal server error"})
  }
 };
 

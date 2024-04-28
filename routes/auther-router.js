@@ -19,7 +19,7 @@ autherRouter.post("/author",[verifyToken,validate(autherSchema)], postAuther);
 //get author
 autherRouter.get("/author",verifyToken,getAuther);
 //get author by email
-autherRouter.get("/author/:autherId",verifyToken, getAutherById);
+autherRouter.post("/author/:autherId",verifyToken, getAutherById);
 //delete author by id
 autherRouter.delete("/author",verifyToken, deleteAuther);
 //update author by id
