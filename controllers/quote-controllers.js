@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import statusCodes from "http-status-codes";
+import StatusCodes from "http-status-codes";
 
 const prisma = new PrismaClient();
 
@@ -8,11 +8,11 @@ const postQuote = async (req, res) => {
     try {
     
   let newquote = await prisma.quotes.create({ data: req.body });
-  res.json({ message: "created", newquote });
+  res.status(StatusCodes.OK).json({ message: "created", newquote });
   
     } catch (error) {
       console.log(error)
-       res.json({error:"internal server error"}) 
+       res.status(StatusCodes.EXPECTATION_FAILED).json({error:"internal server error"}) 
     }
 };
 
@@ -21,10 +21,10 @@ const getQuote = async (req, res) => {
     try {
         
   const quotes = await prisma.quotes.findMany();
-  res.send(quotes);
+  res.status(StatusCodes.OK).send(quotes);
         
     } catch (error) {
-        res.json({error:"not good"})
+        res.status(StatusCodes.EXPECTATION_FAILED).json({error:"internal server error"})
     }
 };
 
@@ -38,13 +38,13 @@ const getQuoteById = async (req, res) => {
       where: { id:id },
     });
     if (quote===null) {
-      res.json({message:"invalid quote id."});
+      res.status(StatusCodes.FORBIDDEN).json({message:"invalid quote id."});
     } else {
-      res.send(quote);
+      res.status(StatusCodes.OK).send(quote);
     }
     
     } catch (error) {
-        res.json({error:"not good"})
+        res.status(StatusCodes.EXPECTATION_FAILED).json({error:"not good"})
     }
 };
 
@@ -52,17 +52,17 @@ const getQuoteById = async (req, res) => {
 const deleteQuote = async (req, res) => {
   const id = parseInt(req.body.id)  
   if (! id) {
-    res.json({message:"id not found"})
+    res.status(StatusCodes.FORBIDDEN).json({message:"id not found"})
   } else {
     try { 
       const quote = await prisma.quotes.delete({
         where: { id: id },
       })
       ;
-      res.json({ message: "quote deleted successful", quote });
+      res.status(StatusCodes.OK).json({ message: "Quote deleted successful", quote });
         } catch (error) {
           console.log(error)
-            res.json({message:"id not found"})
+            res.status(StatusCodes.EXPECTATION_FAILED).json({error:"Internal server error."})
         }
   }
  
@@ -72,17 +72,17 @@ const deleteQuote = async (req, res) => {
 const updateQuote = async (req,res) => {
   const id = parseInt(req.body.id)
  if (! id) {
-  res.json({message:"id not found"})
+  res.status(StatusCodes.EXPECTATION_FAILED).json({message:"id not found"})
  } else {
   try {  
   const quote = await prisma.quotes.update({
     where: { id:id },
     data: req.body,
   });
-  res.send(quote);
+  res.status(StatusCodes.OK).send(quote);
     } catch (error) {
       console.log(error)
-        res.json({error:"not good"})
+        res.status(StatusCodes.EXPECTATION_FAILED).json({error:"internal server error."})
     }
  }
     

@@ -23,7 +23,7 @@ bcrypt.hash(req.body.password, 10, async function (err,hash) {
   } else {
     //create auther
     let newAuther = await prisma.auther.create({ data: {...req.body,password:hash}});
-  res.json({ message: "created", newAuther });
+  res.status(StatusCodes.OK).json({ message: "created", newAuther });
   }
 });
     }
@@ -36,9 +36,9 @@ bcrypt.hash(req.body.password, 10, async function (err,hash) {
 const getAuther = async (req, res) => {
  try {
     const authers = await prisma.auther.findMany();
-    res.send(authers);
+    res.status(StatusCodes.OK).send(authers);
  } catch (error) {
-    res.json({error:"not good"})
+    res.status(StatusCodes.BAD_REQUEST).json({error:"not good"})
  }
 };
 
@@ -51,14 +51,14 @@ const getAutherById = async (req, res) => {
   }
  )
  if (auther === null) {
-  res.json({message:"invalid ID"});
+  res.status(StatusCodes.BAD_REQUEST).json({message:"invalid ID"});
  } else {
-  res.json({auther})
+  res.status(StatusCodes.OK).json({auther})
  }
   res.send(auther);
     } catch (error) {
         console.log(error)
-        res.json({error:"internal server error"})
+        res.status(StatusCodes.EXPECTATION_FAILED).json({error:"internal server error"})
     }
 };
 
@@ -69,13 +69,13 @@ const deleteAuther = async (req, res) => {
         where: { email: req.body.email },
       });
       if (auther===null) {
-        res.json({message:"invalid email."});
+        res.status(StatusCodes.FORBIDDEN).json({message:"invalid email."});
       } else {
-        res.json({ message: "Auther deleted successful", auther });
+        res.status(StatusCodes.OK).json({ message: "Auther deleted successful", auther });
       }
       
   } catch (error) {
-    res.json({error:"Internal server error."})
+    res.status(StatusCodes.EXPECTATION_FAILED).json({error:"Internal server error."})
   }
 };
 
@@ -88,15 +88,15 @@ const updateAuther = async (req,res) => {
       });
 
       if (auther===null) {
-        res.json({message:"invalid email."});
+        res.status(StatusCodes.EXPECTATION_FAILED).json({message:"invalid email."});
       } else {
-        res.send(auther);
+        res.status(StatusCodes.OK).send(auther);
       }
       
       
  } catch (error) {
   console.log(error)
-    res.json({error:"internal server error"})
+    res.status(StatusCodes.EXPECTATION_FAILED).json({error:"internal server error"})
  }
 };
 
