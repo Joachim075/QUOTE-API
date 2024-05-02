@@ -88,7 +88,7 @@ const updateAuther = async (req,res) => {
       });
 
       if (auther===null) {
-        res.status(StatusCodes.EXPECTATION_FAILED).json({message:"invalid email."});
+        res.status(StatusCodes.EXPECTATION_FAILED).json({message:"invalid email, please review."});
       } else {
         res.status(StatusCodes.OK).send(auther);
       }
