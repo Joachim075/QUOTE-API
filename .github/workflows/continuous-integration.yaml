@@ -1,0 +1,41 @@
+name: continuous-integration
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  DATABASE_URL: postgresql://postgres:2525@localhost:5000/quote-db?schema=public
+  JWT_SECRET: jwt-key
+  JWT_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmFvY2hpbSIsImF1dGhlcklkIjoyMiwiaWF0IjoxNzE0MjkxODc2LCJleHAiOjE3MTQzNzgyNzZ9.GD3KuFjSjLoblW9RhlLDEnH2RV3ZIHoshoX3o-HW4eo
+
+jobs:
+  testing-api:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14-alpine 
+        env:
+          POSTGRES_USER: postgres 
+          POSTGRES_PASSWORD: 2525
+          POSTGRES_DB: quote-db
+        ports:
+          - 5000:5000                               
+
+    steps:
+      - name: checkout code into the runner   
+        uses: actions/checkout@v4
+
+      - name: setup nodejs on the runner
+        uses: actions/setup-node@v4
+        with: 
+          node-version: 13 
+
+      - name: install npm packages
+        run: npm ci            
+
+      - name: run migration files against db
+        run: npx prisma migrate dev
+
+      - name: run the integration tests
+        run: npm test
