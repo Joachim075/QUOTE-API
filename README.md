@@ -1,14 +1,14 @@
  # QUOTE API
 The Quote API is a Node.js Express server that allows users to manage authors and their quotes. It provides endpoints for creating, retrieving, updating, and deleting author information.
 ## Tools Used
-CORS 
-nodemon
-joi
-bcrypt
-prisma
-postgress
-jwt
-##Have two branches
+ CORS 
+ nodemon
+ joi
+ bcrypt
+ prisma
+ postgress
+ jwt
+## Have two branches
 main
 develop
 ## API Documentation
