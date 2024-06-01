@@ -1,27 +1,30 @@
-import express from "express";
+import express  from "express";
 import morgan from "morgan";
-import cors from "cors";
+import cors from "cors"
 import { autherRouter } from "./routes/auther-router.js";
 import { qouteRouter } from "./routes/quote-router.js";
 
-const app = express();
+const app= express();
 
-const PORT = process.env.PORT || 4000;
+const PORT= process.env.PORT || 4000;
 
-// Middleware
+//middleware
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
 
-// Redirect root URL to autherRouter
-app.get("/", (req, res) => {
-  res.redirect("/auther");
+erver.get("/", (req, res) => {
+  
+    res.json({message: "Hello, Welcome to quote_API"})
+
+
 });
 
-// Routes
-app.use("/auther", autherRouter);
-app.use("/quote", qouteRouter);
+app.use(autherRouter)
+app.use(qouteRouter)
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+
+
+app.listen(1000,()=>{ console.log(`server is running on port ${PORT}`)})
+
