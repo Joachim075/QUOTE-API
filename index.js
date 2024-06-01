@@ -13,7 +13,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
 
-erver.get("/", (req, res) => {
+app.get("/", (req, res) => {
   
     res.json({message: "Hello, Welcome to quote_API"})
 
